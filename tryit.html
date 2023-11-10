@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>带有提词器的摄像头访问</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+  #container {
+    position: relative;
+    width: 90%;
+    max-width: 640px;
+    height: 360px; /* Set a minimum height */
+    margin: 20px 0;
+    border-radius: 8px; /* Rounded corners for the video */
+    overflow: hidden; /* Ensures the video corners are rounded */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  #videoElement {
+    width: 100%;
+    height: 100%;
+    display: block; /* remove extra space below video */
+  }
+  #teleprompter {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker background for better readability */
+    padding: 10px;
+  }
+  .controls {
+    width: 90%;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical; /* Allow vertical resize */
+  }
+  button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+  }
+  button:hover, button:focus {
+    background-color: #0056b3;
+    outline: none; /* Remove focus outline */
+  }
+</style>
+</head>
+<body>
+
+<div id="container">
+    <video id="videoElement" autoplay></video>
+    <div id="teleprompter">这里是提示文字</div>
+</div>
+
+<div class="controls">
+    <button onclick="startCamera()">开启摄像头</button>
+    <textarea id="promptText" placeholder="请在此输入提示文字"></textarea>
+    <button onclick="updateTeleprompter()">更新提示文字</button>
+</div>
+
+<script>
+function startCamera() {
+    var video = document.getElementById('videoElement');
+
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+            })
+            .catch(function (error) {
+                console.log("错误!", error);
+                alert("无法打开摄像头，请检查浏览器权限.");
+            });
+    } else {
+        alert("你的浏览器不支持打开摄像头.");
+    }
+}
+
+function updateTeleprompter() {
+    var text = document.getElementById('promptText').value;
+    if(text.trim() === "") {
+        alert("请输入提示文字.");
+        return;
+    }
+    document.getElementById('teleprompter').innerText = text;
+}
+</script>
+
+</body>
+</html>
